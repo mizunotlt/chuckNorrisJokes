@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Jokes</string>
+    <string name="textButton">Reload</string>
+    <string name="hintTextEdit">Count</string>
+    <string name="defaultCount">0</string>
+    <string name="appInfo">Api info</string>
+</resources>
