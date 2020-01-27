@@ -1,7 +1,9 @@
 package com.example.chucnorrisjokes.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.webkit.WebView
 import com.example.chucnorrisjokes.utils.WebClient
 import com.example.chucnorrisjokes.R
@@ -30,7 +32,10 @@ class BrowserActivity : AppCompatActivity() {
 
 
     }
-
+    fun onClickButtonJokes(view: View){
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
     override fun onBackPressed() {
         if (browserView.canGoBack()) {
             browserView.goBack()

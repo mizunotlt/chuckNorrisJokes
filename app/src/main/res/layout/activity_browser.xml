@@ -45,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:scaleType="centerInside"
+                android:onClick="onClickButtonJokes"
                 app:srcCompat="@drawable/no_button_jokes" />
 
             <ImageButton
