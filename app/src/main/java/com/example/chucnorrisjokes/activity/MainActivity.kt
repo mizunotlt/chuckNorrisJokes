@@ -1,77 +1,87 @@
 package com.example.chucnorrisjokes.activity
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.chucnorrisjokes.utils.Adapter
-import com.example.chucnorrisjokes.utils.GetJokes
+import androidx.fragment.app.Fragment
+import com.example.chucnorrisjokes.fragments.BrowserFragment
+import com.example.chucnorrisjokes.fragments.JokeFragment
 import com.example.chucnorrisjokes.R
-import java.lang.NumberFormatException
-
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var textEdit: EditText
-    private lateinit var listJokes: RecyclerView
-    private var jokesArray :ArrayList<String> = ArrayList()
-    private lateinit var jokes: GetJokes
-    private lateinit var adapterJokes: Adapter
+    private lateinit var  bottomNavigation: BottomNavigationView
+    private  var jokesFragment: JokeFragment? = null
+    private  var browserFragment: BrowserFragment? = null
+    private val fragmentManager by lazy { supportFragmentManager }
+    private val jokesTAG = "jokesFragment"
+    private val webTAG = "webFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        textEdit = findViewById(R.id.countJokes)
-        listJokes = findViewById(R.id.listJokes)
-        listJokes.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        initScreen()
-        resetScreen(savedInstanceState)
-    }
+        browserFragment = fragmentManager.findFragmentByTag(webTAG) as? BrowserFragment
+        jokesFragment = fragmentManager.findFragmentByTag(jokesTAG) as? JokeFragment
+        bottomNavigation = findViewById(R.id.navigationMenu)
+        bottomNavigation.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.navigation_jokes ->{
+                    if (jokesFragment == null) {
+                        jokesFragment = JokeFragment()
+                        val fragmentTransaction = fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(R.id.controlFrameLayout, jokesFragment!!,  jokesTAG)
+                        fragmentTransaction.addToBackStack(jokesTAG)
+                        fragmentTransaction.commit()
 
-    fun clickOnWebButton(view: View) {
-        val intent = Intent(this, BrowserActivity::class.java)
-        startActivity(intent)
-    }
-
-    fun clickReload(view: View) {
-        try{
-            jokes = GetJokes(this, textEdit.text.toString().toInt())
+                    }
+                    else{
+                        val fragmentTransaction = fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(R.id.controlFrameLayout, jokesFragment!!,  jokesTAG)
+                        fragmentTransaction.addToBackStack(jokesTAG)
+                        fragmentTransaction.commit()
+                    }
+                }
+                R.id.navigation_web -> {
+                    if (browserFragment == null) {
+                        browserFragment = BrowserFragment()
+                        val fragmentTransaction = fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(R.id.controlFrameLayout, browserFragment!!,  webTAG)
+                        fragmentTransaction.addToBackStack(webTAG)
+                        fragmentTransaction.commit()
+                    }
+                    else{
+                        val fragmentTransaction = fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(R.id.controlFrameLayout, browserFragment!!,  webTAG)
+                        fragmentTransaction.addToBackStack(webTAG)
+                        fragmentTransaction.commit()
+                    }
+                }
+            }
+            false
         }
-        catch (e: NumberFormatException){
-            Log.e("Error", "Error with input number")
+    }
 
+
+    private fun createFragment(fragment: Fragment, tag: String){
+        val fm = supportFragmentManager
+        val fragmentTransaction = fm.beginTransaction()
+        fragmentTransaction.replace(R.id.controlFrameLayout, fragment,  jokesTAG)
+        fragmentTransaction.commit()
+    }
+
+    private fun replaceFragment(fragment: Fragment, tag: String){
+
+    }
+
+
+
+    override fun onBackPressed() {
+        val fragments = supportFragmentManager.fragments
+        for (f in fragments) {
+            if (f is BrowserFragment)
+                f.onBackPressed()
         }
-        jokes = GetJokes(this, textEdit.text.toString().toInt())
-        jokes.requestToAPI()
-        jokes.queue.requestQueue.addRequestFinishedListener<String> {
-            jokesArray.clear()
-            jokes.makeJokeArrayList()
-            jokesArray.addAll(jokes.jokesArrayList)
-            adapterJokes = Adapter(jokesArray)
-            listJokes.adapter = adapterJokes
-        }
+        super.onBackPressed()
     }
 
-    override fun onSaveInstanceState(saveBundle: Bundle) {
-        super.onSaveInstanceState(saveBundle)
-        saveBundle.putStringArrayList("jokes", jokesArray)
-    }
-
-    private fun resetScreen(saveBundle: Bundle?){
-        if(saveBundle != null){
-            jokesArray.clear()
-            saveBundle.getStringArrayList("jokes")?.let { jokesArray.addAll(it) }
-        }
-
-    }
-
-    private fun initScreen(){
-        adapterJokes = Adapter(jokesArray)
-        listJokes.adapter = adapterJokes
-    }
 }

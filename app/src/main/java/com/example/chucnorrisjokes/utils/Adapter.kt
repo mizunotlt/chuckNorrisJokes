@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chucnorrisjokes.R
+import com.example.chucnorrisjokes.data.JokesData
 
 
-class Adapter(private val elem: ArrayList<String>): RecyclerView.Adapter<Adapter.ViewHolder>(){
+class Adapter(private var joke: ArrayList<JokesData>): RecyclerView.Adapter<Adapter.ViewHolder>(){
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(elem[position])
+        holder.bindItems(joke[position].joke)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -26,5 +27,10 @@ class Adapter(private val elem: ArrayList<String>): RecyclerView.Adapter<Adapter
         return ViewHolder(textView)
     }
 
-    override fun getItemCount(): Int = elem.size
+    fun update(jokesData: ArrayList<JokesData>){
+        joke = jokesData
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int = joke.size
 }

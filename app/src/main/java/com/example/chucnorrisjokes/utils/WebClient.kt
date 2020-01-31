@@ -6,8 +6,6 @@ import android.webkit.WebResourceRequest
 import android.os.Build
 import android.annotation.TargetApi
 
-
-
 class WebClient: WebViewClient() {
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -20,6 +18,4 @@ class WebClient: WebViewClient() {
         view.loadUrl(url)
         return true
     }
-
-
 }
